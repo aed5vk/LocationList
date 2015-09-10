@@ -8,18 +8,19 @@
 
     <EditText
         android:id="@+id/userInput"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:hint="Type a word here"
         android:layout_centerHorizontal="true"
         android:inputType="text"
+        android:imeOptions="actionSend"
         />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="@string/toast_button"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
