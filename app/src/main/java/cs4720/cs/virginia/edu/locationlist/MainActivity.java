@@ -1,8 +1,14 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +18,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
 
     private EditText userWords;
     private Button responseButton;
+    private Button locationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         userWords = (EditText) findViewById(R.id.userInput);
         responseButton = (Button) findViewById(R.id.button);
+        locationButton = (Button) findViewById(R.id.buttonCoordinates);
 
         responseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -61,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), s,
                 Toast.LENGTH_LONG).show();
     }
-    
+
+    public void startService(View view) {
+        Intent intent = new Intent(this, locationService.class);
+        startService(intent);
+    }
+
+    public void stopService(View view) {
+        Intent intent = new Intent(this, locationService.class);
+        stopService(intent);
+    }
+
+
 
 }
