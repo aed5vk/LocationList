@@ -21,6 +21,10 @@ gradlew
 gradlew.bat
 settings.gradle
 
+# IntelliJ files
+.idea
+*.iml
+
 # Local configuration file (sdk path, etc)
 local.properties
 
