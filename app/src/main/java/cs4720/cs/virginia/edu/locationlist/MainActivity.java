@@ -1,7 +1,9 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,13 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+
+    ArrayList<String> itemList = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
+
+    public final static String EXTRA_MESSAGE = "cs4720.cs.virginia.edu.toDo";
 
 
     private EditText userWords;
@@ -38,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         responseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                sendToast();
+                addItem();
             }
         });
 
@@ -66,15 +75,58 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+   /* @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLocationService();
+                } else {
+
+                }
+                return;
+            }
+
+        }
+    }
+
+    public void checkMyPermission (){
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        }else{
+            startLocationService();
+        }
+    }
+    */
+
+    public void startLocationService(){
+        Intent intent = new Intent(this, locationService.class);
+        startService(intent);
+
+    }
+
     public void sendToast(){
         String s = userWords.getText().toString();
         Toast.makeText(getApplicationContext(), s,
                 Toast.LENGTH_LONG).show();
     }
 
+
+    public void addItem(){
+        String s = userWords.getText().toString();
+        Intent intent = new Intent(this, toDO.class);
+        intent.putExtra(EXTRA_MESSAGE, s);
+        startActivity(intent);
+    }
+
     public void startService(View view) {
+        //checkMyPermission();
         Intent intent = new Intent(this, locationService.class);
         startService(intent);
+
     }
 
     public void stopService(View view) {

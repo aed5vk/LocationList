@@ -3,5 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="toast_button">Click to see a toast</string>
+    <string name="toast_button">Add</string>
+    <string name="title_activity_to_do">toDO</string>
 </resources>
