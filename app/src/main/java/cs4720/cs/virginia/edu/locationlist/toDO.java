@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 public class toDO extends AppCompatActivity {
+
 
     private Button cameraButton;
     ImageView image;
@@ -23,6 +25,9 @@ public class toDO extends AppCompatActivity {
         setContentView(R.layout.activity_to_do);
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        TextView txtView = (TextView) findViewById(R.id.oneItem);
+        txtView.setText(message);
+
 
         image = (ImageView)findViewById(R.id.imageV);
         cameraButton = (Button) findViewById(R.id.cameraButton);
@@ -32,6 +37,7 @@ public class toDO extends AppCompatActivity {
                 activateCamera();
             }
         });
+
        /* TextView textView = new TextView(this);
         textView.setTextSize(40);
         textView.setText(message);
@@ -79,5 +85,6 @@ public class toDO extends AppCompatActivity {
         Log.d("pics", image.getScaleType().toString());
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
+
 
 }

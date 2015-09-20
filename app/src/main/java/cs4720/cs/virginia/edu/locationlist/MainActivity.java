@@ -11,14 +11,17 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,32 +29,45 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<String> itemList = new ArrayList<String>();
+
+    ArrayList<String> toDoList = new ArrayList<String>();
     ArrayAdapter<String> adapter;
+    private EditText userWords;
+    private Button responseButton;
+    //private Button locationButton;
 
     public final static String EXTRA_MESSAGE = "cs4720.cs.virginia.edu.toDo";
 
-
-    private EditText userWords;
-    private Button responseButton;
-    private Button locationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startLocationService();
+
+        ListView listView = (ListView)findViewById(R.id.listView);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toDoList);
+        listView.setOnItemClickListener(listClickedHandler);
+        listView.setAdapter(adapter);
 
         userWords = (EditText) findViewById(R.id.userInput);
-        responseButton = (Button) findViewById(R.id.button);
-        locationButton = (Button) findViewById(R.id.buttonCoordinates);
+        //responseButton = (Button) findViewById(R.id.button);
+       // locationButton = (Button) findViewById(R.id.buttonCoordinates);
 
-        responseButton.setOnClickListener(new View.OnClickListener() {
+       /* responseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 addItem();
             }
         });
+        */
 
     }
+
+    private AdapterView.OnItemClickListener listClickedHandler = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+            Toast.makeText(getApplicationContext(), toDoList.get(position), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,6 +133,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void addItem(){
         String s = userWords.getText().toString();
+        Intent intent = new Intent(this, toDO.class);
+        intent.putExtra(EXTRA_MESSAGE, s);
+        startActivity(intent);
+    }
+
+    public void addItem(View view){
+        String s = userWords.getText().toString();
+        toDoList.add(s);
+        adapter.notifyDataSetChanged();
         Intent intent = new Intent(this, toDO.class);
         intent.putExtra(EXTRA_MESSAGE, s);
         startActivity(intent);
