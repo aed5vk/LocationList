@@ -10,7 +10,26 @@
         android:id="@+id/oneItem"
         android:text="Your To-Do List"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="30dp"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add image"
+        android:id="@+id/cameraButton"
+        android:layout_alignRight="@+id/userInput"
+        android:layout_alignEnd="@+id/userInput" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageV"
+        android:src="@drawable/emptypic"
+        android:layout_below="@id/cameraButton"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:id="@+id/userInput"
@@ -19,7 +38,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:hint="Enter a description of your task"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/oneItem"
+        android:layout_below="@id/imageV"
         android:inputType="text"
 
         />
