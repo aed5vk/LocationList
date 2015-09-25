@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,10 +32,11 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
 
-    ArrayList<String> toDoList = new ArrayList<String>();
-    ArrayAdapter<String> adapter;
+    ArrayList<todoEntry> toDoList = new ArrayList<todoEntry>();
+    customAdapter adapter;
     private EditText userWords;
     private Button responseButton;
+    private database db;
     //private Button locationButton;
 
     public final static String EXTRA_MESSAGE = "cs4720.cs.virginia.edu.toDo";
@@ -45,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         startLocationService();
 
+        db=new database(this);
+        toDoList=db.getAllTasks();
+
         ListView listView = (ListView)findViewById(R.id.listView);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toDoList);
+        adapter = new customAdapter(this, android.R.layout.simple_list_item_1, toDoList);
         listView.setOnItemClickListener(listClickedHandler);
         listView.setAdapter(adapter);
 
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AdapterView.OnItemClickListener listClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            Toast.makeText(getApplicationContext(), toDoList.get(position), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), toDoList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -75,6 +81,22 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+    private class customAdapter extends ArrayAdapter<todoEntry> {
+        Context context;
+        ArrayList<todoEntry> taskList = new ArrayList<todoEntry>();
+        int layoutResourceId;
+
+        public customAdapter(Context context, int layoutResourceId,
+                             ArrayList<todoEntry> objects) {
+            super(context, layoutResourceId, objects);
+            this.layoutResourceId = layoutResourceId;
+            this.taskList = objects;
+            this.context = context;
+        }
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -91,32 +113,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-   /* @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 0: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startLocationService();
-                } else {
-
-                }
-                return;
-            }
-
-        }
-    }
-
-    public void checkMyPermission (){
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    0);
-        }else{
-            startLocationService();
-        }
-    }
-    */
 
     public void startLocationService(){
         Intent intent = new Intent(this, locationService.class);
@@ -130,17 +126,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
     }
 
-
-    public void addItem(){
-        String s = userWords.getText().toString();
-        Intent intent = new Intent(this, toDO.class);
-        intent.putExtra(EXTRA_MESSAGE, s);
-        startActivity(intent);
-    }
-
     public void addItem(View view){
         String s = userWords.getText().toString();
-        toDoList.add(s);
+        todoEntry a = new todoEntry();
+        a.setTitle(s);
+        toDoList.add(a);
+        db.addTask(a);
+        adapter.add(a);
         adapter.notifyDataSetChanged();
         Intent intent = new Intent(this, toDO.class);
         intent.putExtra(EXTRA_MESSAGE, s);
@@ -162,3 +154,4 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
