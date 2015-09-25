@@ -2,6 +2,7 @@ package cs4720.cs.virginia.edu.locationlist;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,15 +20,28 @@ public class toDO extends AppCompatActivity {
 
     private Button cameraButton;
     ImageView image;
+    private todoEntry task = new todoEntry();
+    private database db;
+
+    private String title;
+    private EditText description;
+    private String locationString;
+    private String imageString;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do);
+        db.getInstance(this);
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         TextView txtView = (TextView) findViewById(R.id.oneItem);
         txtView.setText(message);
+        task.setTitle(message);
+        description = (EditText) findViewById(R.id.userInput);
+        String desc = description.toString();
+        task.setDescription(desc);
 
 
         image = (ImageView)findViewById(R.id.imageV);
@@ -84,6 +99,8 @@ public class toDO extends AppCompatActivity {
         image.setImageBitmap(pic);
         Log.d("pics", image.getScaleType().toString());
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        task.setImage(pic);
+        db.addTask(task);
     }
 
 
