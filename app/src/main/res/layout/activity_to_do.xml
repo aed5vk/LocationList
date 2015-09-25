@@ -17,20 +17,32 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add image"
-        android:id="@+id/cameraButton"
-        android:layout_alignRight="@+id/userInput"
-        android:layout_alignEnd="@+id/userInput" />
+        android:text="Save"
+        android:id="@+id/saveButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/cameraButton"
+        android:layout_alignEnd="@+id/cameraButton" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageV"
         android:src="@drawable/emptypic"
-        android:layout_below="@id/cameraButton"
+        android:layout_below="@id/saveButton"
         android:scaleType="fitCenter"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add image"
+        android:id="@+id/cameraButton"
+        android:layout_alignTop="@+id/imageV"
+        android:layout_alignRight="@+id/taskFragment"
+        android:layout_marginTop="50dp" />
+
+    <!--
     <EditText
         android:id="@+id/userInput"
         android:layout_width="fill_parent"
@@ -40,7 +52,17 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/imageV"
         android:inputType="text"
-
         />
+    -->
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/taskFragment"
+        android:name="cs4720.cs.virginia.edu.locationlist.TaskFragment"
+        tools:layout="@layout/fragment_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageV" />
+
 
 </RelativeLayout>
