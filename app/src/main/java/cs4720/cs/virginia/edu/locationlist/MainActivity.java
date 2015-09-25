@@ -47,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startLocationService();
-
-        db=new database(this);
+        db.getInstance(this);
         toDoList=db.getAllTasks();
 
         ListView listView = (ListView)findViewById(R.id.listView);
