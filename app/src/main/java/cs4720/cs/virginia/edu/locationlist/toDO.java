@@ -29,7 +29,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     private database db;
 
     private String title;
-    private EditText description;
     private String locationString;
     private String imageString;
     private int id;
@@ -40,23 +39,21 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         Log.i("toDo", "onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do);
-        db.getInstance(this);
+        db = database.getInstance(this);
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         TextView txtView = (TextView) findViewById(R.id.oneItem);
         txtView.setText(message);
 
-        /*
+
         if (picture != null) {
             image.setImageBitmap(picture);
         } else {
             image = (ImageView) findViewById(R.id.imageV);
         }
-        */
+
         task.setTitle(message);
-        description = (EditText) findViewById(R.id.userInput);
-        String desc = description.toString();
-        task.setDescription(desc);
+
 
 
         saveButton = (Button) findViewById(R.id.saveButton);
@@ -119,7 +116,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         Log.d("pics", image.getScaleType().toString());
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         task.setImage(picture);
-        db.addTask(task);
     }
 
     @Override
@@ -139,6 +135,7 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         TODO save stuff
         This is where I plan to do the database stuff
          */
+
     }
 
     public void onFragmentInteraction(String id) {

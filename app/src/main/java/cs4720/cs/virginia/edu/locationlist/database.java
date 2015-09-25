@@ -88,10 +88,12 @@ public class database extends SQLiteOpenHelper {
         }
 // return task list
 
-        for(int i=0; i< taskList.size(); i++){
+
+        for(int i=0; i < taskList.size()-1; i++){
             taskList.get(i).setLocationString(taskList.get(i).getLocationString());
             taskList.get(i).setImageString(taskList.get(i).getImageString());
         }
+
         return taskList;
     }
 

@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startLocationService();
-        db.getInstance(this);
-        toDoList=db.getAllTasks();
+        db = database.getInstance(this);
+        toDoList = db.getAllTasks();
 
         ListView listView = (ListView)findViewById(R.id.listView);
         adapter = new customAdapter(this, android.R.layout.simple_list_item_1, toDoList);
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AdapterView.OnItemClickListener listClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
+            editTODO(toDoList.get(position).getId());
             Toast.makeText(getApplicationContext(), toDoList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void sendToast(){
         String s = userWords.getText().toString();
         Toast.makeText(getApplicationContext(), s,
@@ -137,6 +139,13 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, s);
         startActivity(intent);
     }
+
+    public void editTODO (int id){
+        Intent intent = new Intent(this, toDO.class);
+        intent.putExtra(EXTRA_MESSAGE, id);
+    }
+
+
 
     public void startService(View view) {
         //checkMyPermission();
