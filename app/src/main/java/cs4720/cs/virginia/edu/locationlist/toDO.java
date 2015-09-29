@@ -1,6 +1,7 @@
 package cs4720.cs.virginia.edu.locationlist;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     private Button cameraButton;
     private Button saveButton;
     private Bitmap bitmap;
-    ImageView image;
+    private ImageView image;
     ArrayList<todoEntry> toDoList;
     int positionInList;
     String FILENAME="list_file";
@@ -67,6 +70,11 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         txtView.setText(message);
         toDoList = (ArrayList<todoEntry>)extras.getSerializable("EXTRA_MESSAGE2");
         positionInList = extras.getInt("EXTRA_MESSAGE3");
+        image = (ImageView) findViewById(R.id.imageV);
+
+        if(!task.getImageString().equals("")){
+            onReOpen();
+        }
 
         /*
         picture = task.getImage();
@@ -174,20 +182,21 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         if (bitmap != null) {
             image.setImageBitmap(bitmap);
             image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            task.setImageString(photoFile.getAbsolutePath());
         } else {
             photoFile.delete();
         }
         Log.d("pics", image.getScaleType().toString());
-        //task.setImage(picture);
     }
 
-    /*
+
     public void onReOpen(){
-        picture = task.getImage();
-        image.setImageBitmap(picture);
-        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        bitmap = BitmapFactory.decodeFile(task.getImageString());
+
+
     }
-    */
+
 
     @Override
     protected void onDestroy() {
@@ -203,9 +212,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     }
 
     private void save() {
-        /*
-        TODO save stuff
-         */
 
         toDoList.set(positionInList, task);
         try {
@@ -219,7 +225,8 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
             Log.e("LocationList", e.getMessage());
         }
 
-
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     public void onFragmentInteraction(String id) {
