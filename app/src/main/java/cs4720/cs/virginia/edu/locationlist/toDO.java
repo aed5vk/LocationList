@@ -2,7 +2,11 @@ package cs4720.cs.virginia.edu.locationlist;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,13 +19,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener{
+
+public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener {
 
 
     private Button cameraButton;
     private Button saveButton;
-    private Bitmap picture;
+    private Bitmap bitmap;
     ImageView image;
     ArrayAdapter adapter;
 
@@ -32,6 +41,11 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     private String locationString;
     private String imageString;
     private int id;
+
+    // image creation stuff
+    static final int REQUEST_TAKE_PHOTO = 1;
+    String mCurrentPhotoPath;
+    File photoFile;
 
 
     @Override
@@ -46,15 +60,7 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         txtView.setText(message);
 
 
-        if (picture != null) {
-            image.setImageBitmap(picture);
-        } else {
-            image = (ImageView) findViewById(R.id.imageV);
-        }
-
         task.setTitle(message);
-
-
 
         saveButton = (Button) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +75,19 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
                 activateCamera();
             }
         });
+
+        Log.i("IO", "Trying to find a photoFile");
+        if (bitmap != null) {
+            Log.i("IO", "photoFile exists");
+            try{
+                image.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.e("IO", "photo file exists but no bitmap");
+                image = (ImageView) findViewById(R.id.imageV);
+            }
+        } else {
+            image = (ImageView) findViewById(R.id.imageV);
+        }
 
        /* TextView textView = new TextView(this);
         textView.setTextSize(40);
@@ -105,22 +124,49 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
     public void activateCamera() {
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 0);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error stuff should never get here
+                Log.e("IO", "couldn't make a photo file");
+            }
+
+            // By now the file should be successfully created
+            if (photoFile != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+
+                }
+
+            }
+        }
     }
 
-
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        picture = (Bitmap) data.getExtras().get("data");
-        image.setImageBitmap(picture);
+        //super.onActivityResult(requestCode, resultCode, data);
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(photoFile));
+        } catch (IOException e) {
+            Log.e("IO", "couldn't find uri for photofile");
+        }
+        if (bitmap != null) {
+            image.setImageBitmap(bitmap);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        } else {
+            photoFile.delete();
+        }
         Log.d("pics", image.getScaleType().toString());
-        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        task.setImage(picture);
+        //task.setImage(picture);
     }
 
     @Override
     protected void onDestroy() {
         Log.i("toDo", "onDestroy Called");
+
         super.onDestroy();
     }
 
@@ -139,6 +185,23 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     }
 
     public void onFragmentInteraction(String id) {
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = this.getExternalFilesDir(null);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
 
     }
 

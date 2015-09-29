@@ -37,7 +37,8 @@
 
         <activity
             android:name=".toDO"
-            android:label="@string/title_activity_to_do" >
+            android:label="@string/title_activity_to_do"
+            android:configChanges="orientation|screenSize">
         </activity>
 
         <activity
