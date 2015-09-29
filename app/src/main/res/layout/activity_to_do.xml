@@ -32,6 +32,16 @@
         android:scaleType="fitCenter"
         android:layout_centerHorizontal="true" />
 
+    <!--
+    <fragment android:name="cs4720.cs.virginia.edu.locationlist.PhotoFragment"
+        android:id="@+id/photoFragment"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        tools:layout="@layout/fragment_photo"
+        android:layout_below="@id/saveButton"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"/>
+        -->
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"

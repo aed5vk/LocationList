@@ -81,7 +81,6 @@ public class todoEntry implements Serializable{
 
     public void setImageString(String imageString) {
         this.imageString = imageString;
-        this.image = StringToBitMap(imageString);
     }
 
 
@@ -90,26 +89,5 @@ public class todoEntry implements Serializable{
         return title;
     }
 
-    /** Got this method from stack overflow */
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0,
-                    encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
-
-    /** Got this method from stack overflow */
-    public String BitMapToString(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
 
 }
