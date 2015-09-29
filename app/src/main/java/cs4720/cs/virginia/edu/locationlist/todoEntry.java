@@ -7,17 +7,17 @@ import android.util.Base64;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 
 /**
  * Created by aerikdan on 9/24/15.
  */
-public class todoEntry {
+public class todoEntry implements Serializable{
 
     private String title;
     private String description;
     private String locationString;
     private String imageString;
-    private int id;
     private Location location;
     private Bitmap image;
 
@@ -28,7 +28,6 @@ public class todoEntry {
         this.imageString = "";
         this.location = null;
         this.image = null;
-        this.id = 0;
     }
 
 
@@ -38,13 +37,6 @@ public class todoEntry {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDescription() {
@@ -90,6 +82,12 @@ public class todoEntry {
     public void setImageString(String imageString) {
         this.imageString = imageString;
         this.image = StringToBitMap(imageString);
+    }
+
+
+    @Override
+    public String toString() {
+        return title;
     }
 
     /** Got this method from stack overflow */

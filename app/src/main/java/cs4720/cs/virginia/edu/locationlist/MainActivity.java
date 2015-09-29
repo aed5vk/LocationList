@@ -3,12 +3,6 @@ package cs4720.cs.virginia.edu.locationlist;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -17,41 +11,55 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    ArrayList<todoEntry> toDoList = new ArrayList<todoEntry>();
-    customAdapter adapter;
+    ArrayList<todoEntry> toDoList;
+    ArrayAdapter<todoEntry> adapter;
     private EditText userWords;
     private Button responseButton;
-    private database db;
-    //private Button locationButton;
+    String FILENAME="list_file";
 
-    public final static String EXTRA_MESSAGE = "cs4720.cs.virginia.edu.toDo";
+    //public final static String EXTRA_MESSAGE = "cs4720.cs.virginia.edu.toDo";
+    //public final static String EXTRA_MESSAGE2 = "cs4720.cs.virginia.edu.toDo";
+    //public final static String EXTRA_MESSAGE3 = "cs4720.cs.virginia.edu.toDo";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+           toDoList = new ArrayList<todoEntry>();
+
+            try {
+                FileInputStream fis = openFileInput(FILENAME);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                toDoList = (ArrayList<todoEntry>) ois.readObject();
+                ois.close();
+                fis.close();
+            } catch (Exception e) {
+                Log.e("LocationList", e.getMessage());
+            }
+
+
         startLocationService();
-        db = database.getInstance(this);
-        toDoList = db.getAllTasks();
 
         ListView listView = (ListView)findViewById(R.id.listView);
-        adapter = new customAdapter(this, android.R.layout.simple_list_item_1, toDoList);
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, toDoList);
         listView.setOnItemClickListener(listClickedHandler);
         listView.setAdapter(adapter);
 
@@ -68,10 +76,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(toDoList);
+            oos.flush();
+            oos.close();
+            fos.close();
+        }catch(Exception e) {
+            Log.e("LocationList", e.getMessage());
+        }
+
+    }
+
+
     private AdapterView.OnItemClickListener listClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            editTODO(toDoList.get(position).getId());
-            Toast.makeText(getApplicationContext(), toDoList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            editTODO(toDoList.get(position), position);
+            //Toast.makeText(getApplicationContext(), toDoList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -81,21 +108,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    private class customAdapter extends ArrayAdapter<todoEntry> {
-        Context context;
-        ArrayList<todoEntry> taskList = new ArrayList<todoEntry>();
-        int layoutResourceId;
-
-        public customAdapter(Context context, int layoutResourceId,
-                             ArrayList<todoEntry> objects) {
-            super(context, layoutResourceId, objects);
-            this.layoutResourceId = layoutResourceId;
-            this.taskList = objects;
-            this.context = context;
-        }
-    }
-
 
 
     @Override
@@ -132,17 +144,27 @@ public class MainActivity extends AppCompatActivity {
         todoEntry a = new todoEntry();
         a.setTitle(s);
         toDoList.add(a);
-        db.addTask(a);
-        adapter.add(a);
+        int pos = toDoList.indexOf(a);
         adapter.notifyDataSetChanged();
+
         Intent intent = new Intent(this, toDO.class);
-        intent.putExtra(EXTRA_MESSAGE, s);
+        Bundle extras = new Bundle();
+        extras.putSerializable("EXTRA_MESSAGE", a);
+        extras.putSerializable("EXTRA_MESSAGE2", toDoList);
+        extras.putInt("EXTRA_MESSAGE3", pos);
+        intent.putExtras(extras);
         startActivity(intent);
     }
 
-    public void editTODO (int id){
+    public void editTODO (todoEntry specificEntry, int pos){
         Intent intent = new Intent(this, toDO.class);
-        intent.putExtra(EXTRA_MESSAGE, id);
+        Bundle extras = new Bundle();
+        extras.putSerializable("EXTRA_MESSAGE", specificEntry);
+        extras.putSerializable("EXTRA_MESSAGE2", toDoList);
+        extras.putInt("EXTRA_MESSAGE3", pos);
+        intent.putExtras(extras);
+
+        startActivity(intent);
     }
 
 
@@ -158,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, locationService.class);
         stopService(intent);
     }
+
 
 
 

@@ -1,5 +1,6 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -15,6 +16,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+
 
 public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener{
 
@@ -23,15 +28,15 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     private Button saveButton;
     private Bitmap picture;
     ImageView image;
-    ArrayAdapter adapter;
+    ArrayList<todoEntry> toDoList;
+    int positionInList;
+    String FILENAME="list_file";
 
-    private todoEntry task = new todoEntry();
-    private database db;
+    private todoEntry task;
 
     private String title;
     private String locationString;
     private String imageString;
-    private int id;
 
 
     @Override
@@ -39,20 +44,22 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         Log.i("toDo", "onCreate called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_to_do);
-        db = database.getInstance(this);
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        Bundle extras = intent.getExtras();
+        task = (todoEntry)extras.getSerializable("EXTRA_MESSAGE");
+        String message = task.getTitle();
         TextView txtView = (TextView) findViewById(R.id.oneItem);
         txtView.setText(message);
-
+        toDoList = (ArrayList<todoEntry>)extras.getSerializable("EXTRA_MESSAGE2");
+        positionInList = extras.getInt("EXTRA_MESSAGE3");
+        picture = task.getImage();
 
         if (picture != null) {
             image.setImageBitmap(picture);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         } else {
             image = (ImageView) findViewById(R.id.imageV);
         }
-
-        task.setTitle(message);
 
 
 
@@ -118,6 +125,12 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         task.setImage(picture);
     }
 
+    public void onReOpen(){
+        picture = task.getImage();
+        image.setImageBitmap(picture);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    }
+
     @Override
     protected void onDestroy() {
         Log.i("toDo", "onDestroy Called");
@@ -133,8 +146,20 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     private void save() {
         /*
         TODO save stuff
-        This is where I plan to do the database stuff
          */
+
+        toDoList.set(positionInList, task);
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(toDoList);
+            oos.flush();
+            oos.close();
+            fos.close();
+        }catch(Exception e) {
+            Log.e("LocationList", e.getMessage());
+        }
+
 
     }
 
