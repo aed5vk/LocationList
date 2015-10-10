@@ -36,7 +36,7 @@ import java.util.Date;
 
 public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener {
 
-
+    private final int BITMAPSCALE = 4;
     private Button cameraButton;
     private Button saveButton;
     private Bitmap bitmap;
@@ -75,18 +75,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         if(!task.getImageString().equals("")){
             onReOpen();
         }
-
-        /*
-        picture = task.getImage();
-
-
-        if (picture != null) {
-            image.setImageBitmap(picture);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        } else {
-            image = (ImageView) findViewById(R.id.imageV);
-        }
-        */
 
         saveButton = (Button) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -175,8 +163,9 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         try {
-            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(photoFile));
-        } catch (IOException e) {
+            //bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(photoFile));
+            bitmap = scaleBitmap(photoFile.getAbsolutePath(), BITMAPSCALE);
+        } catch (Exception e) {
             Log.e("IO", "couldn't find uri for photofile");
         }
         if (bitmap != null) {
@@ -191,8 +180,8 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
 
     public void onReOpen(){
-
-        bitmap = BitmapFactory.decodeFile(task.getImageString());
+        bitmap = scaleBitmap(task.getImageString(), BITMAPSCALE);
+        //bitmap = BitmapFactory.decodeFile(task.getImageString());
 
 
     }
@@ -248,6 +237,12 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
 
+    }
+
+    public static Bitmap scaleBitmap (String file, int scale) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = scale;
+        return BitmapFactory.decodeFile(file, options);
     }
 
 }
