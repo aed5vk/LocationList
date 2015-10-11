@@ -25,6 +25,7 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -44,9 +45,10 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     ArrayList<todoEntry> toDoList;
     int positionInList;
     String FILENAME="list_file";
-
+    private String taskFileName;
+    private ArrayList<String> taskList;
     private todoEntry task;
-
+    private TaskFragment taskFragment;
     private String title;
     private String locationString;
     private String imageString;
@@ -103,14 +105,25 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
             image = (ImageView) findViewById(R.id.imageV);
         }
 
-       /* TextView textView = new TextView(this);
-        textView.setTextSize(40);
-        textView.setText(message);
+        taskFileName = task.getTaskFileName();
+        if (taskFileName == null) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            taskFileName = timeStamp;
+            task.setTaskFileName(taskFileName);
+        } else {
+            try {
+                FileInputStream fis = openFileInput(taskFileName);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                taskList = (ArrayList<String>) ois.readObject();
+                ois.close();
+                fis.close();
+            } catch (Exception e) {
+                Log.e("LocationList", e.getMessage());
+            }
+        }
 
-        // Set the text view as the activity layout
-        setContentView(textView);
-        */
-        //adapter = new ArrayAdapter(this, )
+        // Pass taskList to TaskFragment to render
+        taskFragment = TaskFragment.newInstance(taskList);
     }
 
     @Override
@@ -186,7 +199,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
     }
 
-
     @Override
     protected void onDestroy() {
         Log.i("toDo", "onDestroy Called");
@@ -214,12 +226,25 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
             Log.e("LocationList", e.getMessage());
         }
 
+        try {
+            FileOutputStream fos = openFileOutput(taskFileName, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            taskFragment = (TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment);
+            taskList = taskFragment.returnTasks();
+            oos.writeObject(taskList);
+            oos.flush();
+            oos.close();
+            fos.close();
+        }catch(Exception e) {
+            Log.e("LocationList", e.getMessage());
+        }
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void onFragmentInteraction(String id) {
-
+    public void onFragmentInteraction(int id) {
+        // TODO make an intent to edit the task string and send data back to fragment so it can update
     }
 
     private File createImageFile() throws IOException {
@@ -244,5 +269,4 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         options.inSampleSize = scale;
         return BitmapFactory.decodeFile(file, options);
     }
-
 }
