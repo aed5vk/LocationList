@@ -15,7 +15,8 @@
         android:hint="Enter a new To-DO Item"
         android:layout_centerHorizontal="true"
         android:inputType="text"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="#D7CCC8">
 
 
         <EditText

@@ -1,5 +1,6 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import java.util.jar.Manifest;
 public class locationService extends Service{
     LocationManager locationManager;
     LocationListener locationListener;
+    public static final String BROADCAST_LOCATION = "cs4720.cs.virginia.edu.locationlist.sendLocation";
 
     public locationService() {
     }
@@ -45,7 +47,14 @@ public class locationService extends Service{
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 Log.i("Show Location", "Called");
-                showLocation(location);
+
+                Intent intent = new Intent(BROADCAST_LOCATION);
+                Bundle extras = new Bundle();
+                extras.putString("locationAsString", location.toString());
+                extras.putSerializable("latitude", location.getLatitude());
+                extras.putSerializable("longitude", location.getLongitude());
+                intent.putExtras(extras);
+                sendBroadcast(intent);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -56,9 +65,9 @@ public class locationService extends Service{
         };
 
 
-            // Register the listener with the Location Manager to receive location updates
+        // Register the listener with the Location Manager to receive location updates
 
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -82,8 +91,9 @@ public class locationService extends Service{
         double latitude = location.getLatitude();
         String currentDateTimeString = DateFormat.format("MM/dd/yy h:mm:ssaa", new Date()).toString();
         Toast.makeText(this, "Location (Latitude, Longitude): " + latitude +", "+longitude + " / " + currentDateTimeString, Toast.LENGTH_LONG).show();
-
     }
+
+
 
     private void _shutdownService() {
             locationManager.removeUpdates(locationListener);

@@ -20,6 +20,24 @@ public class todoEntry implements Serializable{
     private String imageString;
     private Location location;
     private Bitmap image;
+    private double latitude;
+    private double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     public todoEntry(){
         this.title = "No Title Entered";
@@ -28,6 +46,8 @@ public class todoEntry implements Serializable{
         this.imageString = "";
         this.location = null;
         this.image = null;
+        this.latitude = 0;
+        this.longitude = 0;
     }
 
 
@@ -72,7 +92,6 @@ public class todoEntry implements Serializable{
 
     public void setLocationString(String locationString) {
         this.locationString = locationString;
-        this.location = new Location (locationString);
     }
 
     public String getImageString() {

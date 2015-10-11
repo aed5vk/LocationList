@@ -1,11 +1,14 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -32,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener {
@@ -44,12 +48,15 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     ArrayList<todoEntry> toDoList;
     int positionInList;
     String FILENAME="list_file";
+    private BroadcastReceiver broadcastReceiver;
 
     private todoEntry task;
 
     private String title;
-    private String locationString;
+    private String locationString = "";
     private String imageString;
+    private double latitude;
+    private double longitude;
 
     // image creation stuff
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -66,11 +73,33 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         Bundle extras = intent.getExtras();
         task = (todoEntry)extras.getSerializable("EXTRA_MESSAGE");
         String message = task.getTitle();
+        locationString = task.getLocationString();
+        latitude = task.getLatitude();
+        longitude = task.getLongitude();
+
         TextView txtView = (TextView) findViewById(R.id.oneItem);
         txtView.setText(message);
         toDoList = (ArrayList<todoEntry>)extras.getSerializable("EXTRA_MESSAGE2");
         positionInList = extras.getInt("EXTRA_MESSAGE3");
         image = (ImageView) findViewById(R.id.imageV);
+
+        if(locationString.equals("")) {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Bundle bundle = intent.getExtras();
+                    if (bundle != null) {
+                        locationString = bundle.getString("locationAsString");
+                        latitude = bundle.getDouble("latitude");
+                        longitude = bundle.getDouble("longitude");
+                        task.setLocationString(locationString);
+                        task.setLatitude(latitude);
+                        task.setLongitude(longitude);
+                    }
+                }
+            };
+            registerReceiver(broadcastReceiver, new IntentFilter(locationService.BROADCAST_LOCATION));
+        }
 
         if(!task.getImageString().equals("")){
             onReOpen();
@@ -195,14 +224,27 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         bitmap = BitmapFactory.decodeFile(task.getImageString());
 
 
+
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
 
     @Override
     protected void onDestroy() {
         Log.i("toDo", "onDestroy Called");
-
         super.onDestroy();
+
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -232,6 +274,17 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     public void onFragmentInteraction(String id) {
 
     }
+
+    public void openMaps (View view){
+        if(latitude == 0 || longitude == 0){
+            return;
+        }
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        this.startActivity(intent);
+    }
+
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
