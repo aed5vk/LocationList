@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
+    android:background="#009688"
     tools:context=".MainActivity"
     android:weightSum="1">
 
@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:inputType="text"
         android:orientation="horizontal"
-        android:background="#009688">
+        >
 
 
         <EditText
