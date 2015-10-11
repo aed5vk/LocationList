@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by aerikdan on 9/24/15.
@@ -20,6 +21,7 @@ public class todoEntry implements Serializable{
     private String imageString;
     private Location location;
     private Bitmap image;
+
     private double latitude;
     private double longitude;
 
@@ -39,7 +41,9 @@ public class todoEntry implements Serializable{
         this.longitude = longitude;
     }
 
-    public todoEntry(){
+    private String taskFileName;
+
+    public todoEntry(String taskFileName){
         this.title = "No Title Entered";
         this.description = "No Description Entered";
         this.locationString = "";
@@ -48,6 +52,7 @@ public class todoEntry implements Serializable{
         this.image = null;
         this.latitude = 0;
         this.longitude = 0;
+        this.taskFileName = taskFileName;
     }
 
 
@@ -102,7 +107,13 @@ public class todoEntry implements Serializable{
         this.imageString = imageString;
     }
 
+    public String getTaskFileName() {
+        return taskFileName;
+    }
 
+    public void setTaskFileName(String taskFileName) {
+        this.taskFileName = taskFileName;
+    }
     @Override
     public String toString() {
         return title;

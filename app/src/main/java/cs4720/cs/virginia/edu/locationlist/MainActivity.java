@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -141,7 +142,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void addItem(View view){
         String s = userWords.getText().toString();
-        todoEntry a = new todoEntry();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        todoEntry a = new todoEntry(timeStamp);
         a.setTitle(s);
         toDoList.add(a);
         int pos = toDoList.indexOf(a);

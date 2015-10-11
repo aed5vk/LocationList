@@ -1,80 +1,51 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="cs4720.cs.virginia.edu.locationlist.toDO">
 
-    <TextView
-        android:id="@+id/oneItem"
-        android:text="Your To-Do List"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"/>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:id="@+id/saveButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/cameraButton"
-        android:layout_alignEnd="@+id/cameraButton" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageV"
-        android:src="@drawable/emptypic"
-        android:layout_below="@id/saveButton"
-        android:scaleType="fitCenter"
-        android:layout_centerHorizontal="true" />
-
-    <!--
-    <fragment android:name="cs4720.cs.virginia.edu.locationlist.PhotoFragment"
-        android:id="@+id/photoFragment"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        tools:layout="@layout/fragment_photo"
-        android:layout_below="@id/saveButton"
-        android:scaleType="fitCenter"
-        android:layout_centerHorizontal="true"/>
-        -->
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add image"
-        android:id="@+id/cameraButton"
-        android:layout_alignTop="@+id/imageV"
-        android:layout_alignRight="@+id/taskFragment"
-        android:layout_marginTop="50dp" />
-
-    <!--
-    <EditText
-        android:id="@+id/userInput"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:hint="Enter a description of your task"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/imageV"
-        android:inputType="text"
-        />
-    -->
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/taskFragment"
-        android:name="cs4720.cs.virginia.edu.locationlist.TaskFragment"
-        tools:layout="@layout/fragment_list"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/locationButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:id="@+id/oneItem"
+            android:text="Your To-Do List"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/saveButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/cameraButton"
+            android:layout_alignEnd="@+id/cameraButton" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageV"
+            android:src="@drawable/emptypic"
+            android:layout_below="@id/saveButton"
+            android:scaleType="fitCenter"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add image"
+            android:id="@+id/cameraButton"
+            android:layout_alignTop="@+id/imageV"
+            android:layout_alignRight="@+id/taskFragment"
+            android:layout_marginTop="50dp" />
 
     <HorizontalScrollView
         android:layout_width="wrap_content"
@@ -96,5 +67,15 @@
         android:layout_toLeftOf="@+id/imageV"
         android:layout_toStartOf="@+id/imageV" />
 
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/taskFragment"
+            android:name="cs4720.cs.virginia.edu.locationlist.TaskFragment"
+            tools:layout="@layout/fragment_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageV"
+            android:textColor="#000000"/>
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

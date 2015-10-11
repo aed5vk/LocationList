@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -40,7 +41,8 @@ import java.util.Locale;
 
 public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentInteractionListener {
 
-
+    private final int BITMAPSCALE = 4;
+    private boolean isRegistered = false;
     private Button cameraButton;
     private Button saveButton;
     private Bitmap bitmap;
@@ -50,8 +52,11 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     String FILENAME="list_file";
     private BroadcastReceiver broadcastReceiver;
 
-    private todoEntry task;
 
+    private String taskFileName;
+    private ArrayList<String> taskList;
+    private todoEntry task;
+    private TaskFragment taskFragment;
     private String title;
     private String locationString = "";
     private String imageString;
@@ -84,6 +89,7 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         image = (ImageView) findViewById(R.id.imageV);
 
         if(locationString.equals("")) {
+            isRegistered = true;
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -104,18 +110,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         if(!task.getImageString().equals("")){
             onReOpen();
         }
-
-        /*
-        picture = task.getImage();
-
-
-        if (picture != null) {
-            image.setImageBitmap(picture);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        } else {
-            image = (ImageView) findViewById(R.id.imageV);
-        }
-        */
 
         saveButton = (Button) findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -144,14 +138,25 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
             image = (ImageView) findViewById(R.id.imageV);
         }
 
-       /* TextView textView = new TextView(this);
-        textView.setTextSize(40);
-        textView.setText(message);
+        taskFileName = task.getTaskFileName();
+        if (taskFileName == null) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            taskFileName = timeStamp;
+            task.setTaskFileName(taskFileName);
+        } else {
+            try {
+                FileInputStream fis = openFileInput(taskFileName);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                taskList = (ArrayList<String>) ois.readObject();
+                ois.close();
+                fis.close();
+            } catch (Exception e) {
+                Log.e("LocationList", e.getMessage());
+            }
+        }
 
-        // Set the text view as the activity layout
-        setContentView(textView);
-        */
-        //adapter = new ArrayAdapter(this, )
+        // Pass taskList to TaskFragment to render
+        taskFragment = TaskFragment.newInstance(taskList);
     }
 
     @Override
@@ -204,8 +209,9 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         try {
-            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(photoFile));
-        } catch (IOException e) {
+            //bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(photoFile));
+            bitmap = scaleBitmap(photoFile.getAbsolutePath(), BITMAPSCALE);
+        } catch (Exception e) {
             Log.e("IO", "couldn't find uri for photofile");
         }
         if (bitmap != null) {
@@ -220,8 +226,8 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
 
     public void onReOpen(){
-
-        bitmap = BitmapFactory.decodeFile(task.getImageString());
+        bitmap = scaleBitmap(task.getImageString(), BITMAPSCALE);
+        //bitmap = BitmapFactory.decodeFile(task.getImageString());
 
 
 
@@ -238,13 +244,14 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         super.onPause();
     }
 
-
     @Override
     protected void onDestroy() {
         Log.i("toDo", "onDestroy Called");
         super.onDestroy();
 
-        unregisterReceiver(broadcastReceiver);
+        if(isRegistered == true){
+            unregisterReceiver(broadcastReceiver);
+        }
     }
 
     @Override
@@ -267,12 +274,25 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
             Log.e("LocationList", e.getMessage());
         }
 
+        try {
+            FileOutputStream fos = openFileOutput(taskFileName, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            taskFragment = (TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment);
+            taskList = taskFragment.returnTasks();
+            oos.writeObject(taskList);
+            oos.flush();
+            oos.close();
+            fos.close();
+        }catch(Exception e) {
+            Log.e("LocationList", e.getMessage());
+        }
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void onFragmentInteraction(String id) {
-
+    public void onFragmentInteraction(int id) {
+        // TODO make an intent to edit the task string and send data back to fragment so it can update
     }
 
     public void openMaps (View view){
@@ -303,4 +323,9 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
     }
 
+    public static Bitmap scaleBitmap (String file, int scale) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = scale;
+        return BitmapFactory.decodeFile(file, options);
+    }
 }
