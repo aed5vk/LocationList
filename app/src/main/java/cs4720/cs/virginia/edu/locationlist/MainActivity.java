@@ -95,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        stopService();
+    }
+
+
 
     private AdapterView.OnItemClickListener listClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
@@ -179,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void stopService(View view) {
+    public void stopService() {
         Intent intent = new Intent(this, locationService.class);
         stopService(intent);
     }

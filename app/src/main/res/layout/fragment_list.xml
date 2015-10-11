@@ -12,6 +12,6 @@
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="#D7CCC8" />
+        android:background="#009688" />
 
 </RelativeLayout>

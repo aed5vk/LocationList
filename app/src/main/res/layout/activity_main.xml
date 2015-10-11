@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:inputType="text"
         android:orientation="horizontal"
-        android:background="#D7CCC8">
+        android:background="#009688">
 
 
         <EditText
@@ -25,6 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="text"
+            android:textColor="#000000"
+            android:background="#FFFFFF"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:hint="Enter a new To-DO Item">
 
@@ -34,6 +36,7 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
             android:onClick="addItem"
             android:text="@string/add_button" />
     </LinearLayout>
@@ -45,16 +48,6 @@
         tools:layout="@layout/fragment_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-
-    <!--
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Click for your Coordinates"
-        android:id="@+id/buttonCoordinates"
-        android:onClick="startService"/>
-        -->
 
 
 </LinearLayout>
