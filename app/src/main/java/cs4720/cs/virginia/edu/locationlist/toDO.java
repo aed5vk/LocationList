@@ -1,5 +1,6 @@
 package cs4720.cs.virginia.edu.locationlist;
 
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -23,7 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.app.FragmentTransaction;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -157,6 +158,10 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
 
         // Pass taskList to TaskFragment to render
         taskFragment = TaskFragment.newInstance(taskList);
+        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.taskFragment, taskFragment);
+        ft.commit();
+        //taskFragment = (TaskFragment) findViewById(R.id.taskFragment);
     }
 
     @Override
@@ -277,7 +282,6 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         try {
             FileOutputStream fos = openFileOutput(taskFileName, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            taskFragment = (TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment);
             taskList = taskFragment.returnTasks();
             oos.writeObject(taskList);
             oos.flush();
@@ -327,5 +331,9 @@ public class toDO extends AppCompatActivity implements TaskFragment.OnFragmentIn
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = scale;
         return BitmapFactory.decodeFile(file, options);
+    }
+
+    public ArrayList<String> getTaskList () {
+        return taskList;
     }
 }

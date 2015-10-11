@@ -174,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
         extras.putInt("EXTRA_MESSAGE3", pos);
         intent.putExtras(extras);
 
+        todoEntry task = (todoEntry)specificEntry;
+
+
         startActivity(intent);
     }
 
