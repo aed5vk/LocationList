@@ -74,7 +74,6 @@ public class TaskFragment extends Fragment implements AbsListView.OnItemClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             taskList = getArguments().getStringArrayList("taskList");
         }
@@ -90,7 +89,6 @@ public class TaskFragment extends Fragment implements AbsListView.OnItemClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
-
         emptyButton = (Button) view.findViewById(R.id.emptyButton);
         emptyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +160,17 @@ public class TaskFragment extends Fragment implements AbsListView.OnItemClickLis
         String s = userWords.getText().toString();
 
         taskList.add(s);
+        ((BaseAdapter)mAdapter).notifyDataSetChanged();
+    }
+
+    public void setTaskList(ArrayList<String> taskList) {
+        if (taskList == null) {
+            this.taskList = new ArrayList<String>();
+        } else {
+            this.taskList = taskList;
+        }
+        //mAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+        //        android.R.layout.simple_list_item_1, android.R.id.text1, taskList);
         ((BaseAdapter)mAdapter).notifyDataSetChanged();
     }
 }
